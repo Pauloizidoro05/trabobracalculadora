@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Obra</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            margin-top: 25px;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #4facfe;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00c6ff;
+        }
+
+        .resultado {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #222;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🏠 Calculadora de Materiais</h1>
+
+    <h2>🧮 Concreto</h2>
+    <input id="largura" placeholder="Largura (m)">
+    <input id="altura" placeholder="Altura (m)">
+    <input id="comprimento" placeholder="Comprimento (m)">
+    <button onclick="calcularConcreto()">Calcular Concreto</button>
+    <p class="resultado" id="resultadoConcreto"></p>
+
+    <h2>🧱 Tijolos</h2>
+    <input id="area" placeholder="Área (m²)">
+    <button onclick="calcularTijolos()">Calcular Tijolos</button>
+    <p class="resultado" id="resultadoTijolos"></p>
+</div>
+
+<script>
+    function calcularConcreto() {
+        let l = document.getElementById("largura").value;
+        let a = document.getElementById("altura").value;
+        let c = document.getElementById("comprimento").value;
+
+        fetch(`/concreto?largura=${l}&altura=${a}&comprimento=${c}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("resultadoConcreto").innerText =
+                    "Volume: " + data.volume_m3 + " m³";
+            });
+    }
+
+    function calcularTijolos() {
+        let area = document.getElementById("area").value;
+
+        fetch(`/tijolos?area=${area}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("resultadoTijolos").innerText =
+                    "Tijolos necessários: " + data.total_tijolos;
+            });
+    }
+</script>
+
+</body>
+</html>
