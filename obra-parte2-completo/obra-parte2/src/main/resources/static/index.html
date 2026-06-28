@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Obra</title>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            min-height: 100vh;
+            padding: 30px 10px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background: white;
+            padding: 35px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        h1 { text-align: center; color: #333; margin-bottom: 5px; }
+        .subtitulo { text-align: center; color: #888; font-size: 14px; margin-bottom: 25px; }
+
+        .secao {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4facfe;
+        }
+
+        h2 { color: #444; margin-bottom: 15px; font-size: 17px; }
+
+        label { display: block; font-size: 13px; color: #555; margin-bottom: 3px; margin-top: 10px; }
+
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            transition: border 0.2s;
+        }
+
+        input:focus { outline: none; border-color: #4facfe; }
+
+        .linha-dois {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #4facfe;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: #00c6ff; }
+
+        .resultado {
+            margin-top: 12px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #e8f7ff;
+            color: #222;
+            font-size: 14px;
+            display: none;
+        }
+
+        .resultado.sucesso { background: #e6f4ea; border-left: 4px solid #34a853; }
+        .resultado.erro    { background: #fce8e8; border-left: 4px solid #ea4335; }
+
+        .numero-orc {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4facfe;
+            margin-bottom: 8px;
+        }
+
+        .busca-linha { display: flex; gap: 10px; }
+        .busca-linha input { flex: 1; }
+        .busca-linha button { width: auto; padding: 10px 20px; margin-top: 0; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th { background: #4facfe; color: white; padding: 8px; text-align: left; }
+        td { padding: 7px 8px; border-bottom: 1px solid #eee; }
+        tr:hover td { background: #f5f5f5; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏠 Calculadora de Materiais</h1>
+    <p class="subtitulo">Sistema de Orçamento para Obras Residenciais</p>
+
+    <!-- SEÇÃO 1: Solicitar Orçamento -->
+    <div class="secao">
+        <h2>📋 Solicitar Orçamento</h2>
+
+        <label>Nome do Cliente</label>
+        <input id="nomeCliente" placeholder="Ex: João da Silva" type="text">
+
+        <p style="font-size:13px; color:#666; margin-top:15px; margin-bottom:5px;">
+            📐 Dimensões do ambiente (planta da casa):
+        </p>
+
+        <div class="linha-dois">
+            <div>
+                <label>Largura (m)</label>
+                <input id="largura" placeholder="Ex: 5.0" type="number" step="0.01">
+            </div>
+            <div>
+                <label>Comprimento (m)</label>
+                <input id="comprimento" placeholder="Ex: 8.0" type="number" step="0.01">
+            </div>
+        </div>
+
+        <div class="linha-dois">
+            <div>
+                <label>Altura das paredes (m)</label>
+                <input id="altura" placeholder="Ex: 3.0" type="number" step="0.01">
+            </div>
+            <div>
+                <label>Área total (m²)</label>
+                <input id="area" placeholder="Ex: 40.0" type="number" step="0.01">
+            </div>
+        </div>
+
+        <button onclick="solicitarOrcamento()">📊 Calcular e Salvar Orçamento</button>
+
+        <div id="resultadoOrcamento" class="resultado"></div>
+    </div>
+
+    <!-- SEÇÃO 2: Buscar por número -->
+    <div class="secao">
+        <h2>🔎 Buscar por Número do Orçamento</h2>
+        <div class="busca-linha">
+            <input id="numeroOrc" placeholder="Ex: ORC-A1B2C3D4" type="text">
+            <button onclick="buscarPorNumero()">Buscar</button>
+        </div>
+        <div id="resultadoBusca" class="resultado"></div>
+    </div>
+
+    <!-- SEÇÃO 3: Buscar por cliente -->
+    <div class="secao">
+        <h2>👤 Buscar por Nome do Cliente</h2>
+        <div class="busca-linha">
+            <input id="nomeCliente2" placeholder="Ex: João" type="text">
+            <button onclick="buscarPorCliente()">Buscar</button>
+        </div>
+        <div id="resultadoCliente" class="resultado"></div>
+    </div>
+
+    <!-- SEÇÃO 4: Calculadoras rápidas (versão anterior) -->
+    <div class="secao">
+        <h2>⚡ Calculadoras Rápidas</h2>
+
+        <p style="font-size:13px; color:#666; margin-bottom:8px;">🧮 Concreto</p>
+        <div class="linha-dois">
+            <div>
+                <input id="ql" placeholder="Largura (m)" type="number" step="0.01">
+            </div>
+            <div>
+                <input id="qa" placeholder="Altura (m)" type="number" step="0.01">
+            </div>
+        </div>
+        <input id="qc" placeholder="Comprimento (m)" type="number" step="0.01" style="margin-top:8px">
+        <button onclick="calcConcreto()" style="margin-top:10px">Calcular Concreto</button>
+        <p id="resConcreto" style="margin-top:8px; font-weight:bold; color:#333;"></p>
+
+        <p style="font-size:13px; color:#666; margin-top:18px; margin-bottom:8px;">🧱 Tijolos</p>
+        <input id="qArea" placeholder="Área (m²)" type="number" step="0.01">
+        <button onclick="calcTijolos()" style="margin-top:10px">Calcular Tijolos</button>
+        <p id="resTijolos" style="margin-top:8px; font-weight:bold; color:#333;"></p>
+    </div>
+</div>
+
+<script>
+    // --- Orçamento completo ---
+    async function solicitarOrcamento() {
+        const nome       = document.getElementById("nomeCliente").value.trim();
+        const largura    = parseFloat(document.getElementById("largura").value);
+        const altura     = parseFloat(document.getElementById("altura").value);
+        const comprimento= parseFloat(document.getElementById("comprimento").value);
+        const area       = parseFloat(document.getElementById("area").value);
+        const div        = document.getElementById("resultadoOrcamento");
+
+        if (!nome || isNaN(largura) || isNaN(altura) || isNaN(comprimento) || isNaN(area)) {
+            mostrar(div, "⚠️ Preencha todos os campos antes de calcular.", "erro");
+            return;
+        }
+
+        try {
+            const resp = await fetch("/orcamento", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nomeCliente: nome, largura, altura, comprimento, area })
+            });
+            const data = await resp.json();
+
+            mostrar(div, `
+                <div class="numero-orc">📄 ${data.numeroOrcamento}</div>
+                <strong>Cliente:</strong> ${data.nomeCliente}<br>
+                <strong>Volume de Concreto:</strong> ${data.volumeConcretoM3.toFixed(3)} m³<br>
+                <strong>Tijolos Necessários:</strong> ${data.quantidadeTijolos} unidades<br>
+                <strong>Data:</strong> ${new Date().toLocaleString("pt-BR")}<br><br>
+                <em>Guarde o número do orçamento para consultas futuras.</em>
+            `, "sucesso");
+        } catch (e) {
+            mostrar(div, "❌ Erro ao comunicar com a API. Verifique se o servidor está rodando.", "erro");
+        }
+    }
+
+    // --- Buscar por número ---
+    async function buscarPorNumero() {
+        const numero = document.getElementById("numeroOrc").value.trim();
+        const div    = document.getElementById("resultadoBusca");
+
+        if (!numero) { mostrar(div, "⚠️ Informe o número do orçamento.", "erro"); return; }
+
+        try {
+            const resp = await fetch(`/orcamento/numero/${numero}`);
+            if (resp.status === 404) { mostrar(div, "❌ Orçamento não encontrado.", "erro"); return; }
+            const d = await resp.json();
+            mostrar(div, formatarOrcamento(d), "sucesso");
+        } catch (e) {
+            mostrar(div, "❌ Erro ao buscar.", "erro");
+        }
+    }
+
+    // --- Buscar por cliente ---
+    async function buscarPorCliente() {
+        const nome = document.getElementById("nomeCliente2").value.trim();
+        const div  = document.getElementById("resultadoCliente");
+
+        if (!nome) { mostrar(div, "⚠️ Informe o nome do cliente.", "erro"); return; }
+
+        try {
+            const resp = await fetch(`/orcamento/cliente/${encodeURIComponent(nome)}`);
+            if (resp.status === 404) { mostrar(div, "❌ Nenhum orçamento encontrado.", "erro"); return; }
+            const lista = await resp.json();
+
+            let html = `<strong>${lista.length} orçamento(s) encontrado(s):</strong><table>
+                <tr><th>Número</th><th>Cliente</th><th>Concreto (m³)</th><th>Tijolos</th></tr>`;
+            lista.forEach(o => {
+                html += `<tr>
+                    <td>${o.numeroOrcamento}</td>
+                    <td>${o.nomeCliente}</td>
+                    <td>${o.volumeConcretoM3.toFixed(2)}</td>
+                    <td>${o.quantidadeTijolos}</td>
+                </tr>`;
+            });
+            html += "</table>";
+            mostrar(div, html, "sucesso");
+        } catch (e) {
+            mostrar(div, "❌ Erro ao buscar.", "erro");
+        }
+    }
+
+    // --- Calculadoras rápidas ---
+    function calcConcreto() {
+        const l = parseFloat(document.getElementById("ql").value);
+        const a = parseFloat(document.getElementById("qa").value);
+        const c = parseFloat(document.getElementById("qc").value);
+        if (isNaN(l)||isNaN(a)||isNaN(c)) { document.getElementById("resConcreto").innerText="⚠️ Preencha os campos."; return; }
+        fetch(`/concreto?largura=${l}&altura=${a}&comprimento=${c}`)
+            .then(r=>r.json())
+            .then(d => { document.getElementById("resConcreto").innerText = `Volume: ${d.volume_m3} m³`; });
+    }
+
+    function calcTijolos() {
+        const area = parseFloat(document.getElementById("qArea").value);
+        if (isNaN(area)) { document.getElementById("resTijolos").innerText="⚠️ Preencha a área."; return; }
+        fetch(`/tijolos?area=${area}`)
+            .then(r=>r.json())
+            .then(d => { document.getElementById("resTijolos").innerText = `Tijolos: ${d.total_tijolos} unidades`; });
+    }
+
+    // --- Utilitário ---
+    function mostrar(div, html, tipo) {
+        div.innerHTML = html;
+        div.className = "resultado " + tipo;
+        div.style.display = "block";
+    }
+
+    function formatarOrcamento(d) {
+        return `<div class="numero-orc">📄 ${d.numeroOrcamento}</div>
+            <strong>Cliente:</strong> ${d.nomeCliente}<br>
+            <strong>Dimensões:</strong> ${d.larguraM}m × ${d.comprimentoM}m × ${d.alturaM}m altura<br>
+            <strong>Área:</strong> ${d.areaM2} m²<br>
+            <strong>Volume de Concreto:</strong> ${d.volumeConcretoM3.toFixed(3)} m³<br>
+            <strong>Tijolos:</strong> ${d.quantidadeTijolos} unidades`;
+    }
+</script>
+</body>
+</html>
